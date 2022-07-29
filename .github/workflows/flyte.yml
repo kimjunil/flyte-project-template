@@ -18,11 +18,9 @@ jobs:
       - name: Install flytectl
         run: |
           curl -sL https://ctl.flyte.org/install | bash
-          ./bin/flytectl sandbox start
+          ./bin/flytectl sandbox start --source=$(shell pwd)
           ./bin/flytectl config init
-#         ./bin/flytectl config init --host=${{ secrets.FLYTE_ENDPOINT }}
-#         ls
-#         cat /home/runner/.flyte/config.yaml 
+          cat /home/runner/.flyte/config.yaml          
  
       - name: Install pyflyte
         run: pip install -r requirements.txt
