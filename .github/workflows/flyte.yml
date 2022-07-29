@@ -23,7 +23,10 @@ jobs:
           cat /home/runner/.flyte/config.yaml          
  
       - name: Install pyflyte
-        run: pip install flytekit
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install flytekit
           
       - name: Serialize project
         run: |
