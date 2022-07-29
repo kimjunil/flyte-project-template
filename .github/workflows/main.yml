@@ -33,9 +33,14 @@ jobs:
           file: ./Dockerfile
           tags: qraftaxe/${{ github.event.repository.name }}:${{ env.short_sha }}
           push: true
+          
+    outputs:
+      image_tag: qraftaxe/${{ github.event.repository.name }}:${{ env.short_sha }}
+    
 
   push-to-flyte:
-    runs-on: qraftaxe/${{ github.event.repository.name }}:${{ env.short_sha }}
+    needs: docker-build-and-push
+    runs-on: ${{ needs.docker-build-and-push.image_tag}}
 
     steps:
     
