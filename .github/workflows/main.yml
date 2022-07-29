@@ -30,7 +30,6 @@ jobs:
           
       - uses: docker/build-push-action@v3.1.0
         with:
-          # Path to the Dockerfile
           file: ./Dockerfile
-          # List of tags
           tags: qraftaxe/${{ github.event.repository.name }}:${{ env.short_sha }}
+          push: true
