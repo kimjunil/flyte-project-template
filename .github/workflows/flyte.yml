@@ -18,9 +18,11 @@ jobs:
       - name: Install flytectl
         run: |
           curl -sL https://ctl.flyte.org/install | bash
-          ./bin/flytectl config init --host=${{ secrets.FLYTE_ENDPOINT }}
-          ls
-          cat /home/runner/.flyte/config.yaml 
+          ./bin/flytectl sandbox start
+          ./bin/flytectl config init
+#         ./bin/flytectl config init --host=${{ secrets.FLYTE_ENDPOINT }}
+#         ls
+#         cat /home/runner/.flyte/config.yaml 
  
       - name: Install pyflyte
         run: pip install -r requirements.txt
@@ -30,6 +32,9 @@ jobs:
           cd project
           mkdir _pb_output
           pyflyte -c /home/runner/.flyte/config.yaml --pkgs train serialize --image qraftaxe/flyte-project-template:46781260 workflows -f _pb_output/
+          
+      - name: flytectl config init
+        run: ./bin/flytectl config init --host=${{ secrets.FLYTE_ENDPOINT }}
      
       - name: Registar serialized project
         run: ./bin/flytectl register files _pb_output/* -p flytesnacks -d development --version ${{ env.short_sha }}
