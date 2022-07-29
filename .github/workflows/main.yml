@@ -35,33 +35,33 @@ jobs:
           push: true
 
   push-to-flyte:
-    needs: docker-build-and-push
-    runs-on: ubuntu-latest
+    runs-on: qraftaxe/${{ github.event.repository.name }}:${{ env.short_sha }}
 
     steps:
     
       - uses: actions/checkout@v3
       
+      - name: Add SHORT_SHA env property with commit short sha
+        run: echo "short_sha=`echo ${{ github.sha }} | cut -c1-8`" >> $GITHUB_ENV
+        
       - name: Install flytectl
         run: |
           curl -sL https://ctl.flyte.org/install | bash
-          flytectl config init --host=${{ secrets.FLYTE_ENDPOINT }}
+          ./bin/flytectl config init --host=${{ secrets.FLYTE_ENDPOINT }}
  
-      - name: Install pyflyte
-        run: pip install -r requirements.txt
+#       - name: Install pyflyte
+#         run: pip install -r requirements.txt
           
       - name: Serialize project
         run: |
           mkdir _pb_output
-          pyflyte -c flyte_config.yaml --pkgs project serialize --in-container-config-path ~/.flyte/config.yaml --image qraftaxe/${{ github.event.repository.name }}:${{ env.short_sha }} -f _pb_output/
+          pyflyte --pkgs train serialize --local-source-root ./project --image qraftaxe/${{ github.event.repository.name }}:${{ env.short_sha }} workflows -f ./_pb_output/
      
       - name: Registar serialized project
-        run: flytectl register files _pb_output/* -p flytesnacks -d development --version ${{ env.short_sha }}
+        run: ./bin/flytectl register files _pb_output/* -p flytesnacks -d development --version ${{ env.short_sha }}
            
       - name: Generate execution spec file
-        run: flytectl get launchplan -p flytesnacks -d development --version v5 project.train.train_workflow --execFile execution_spec.yaml
+        run: ./bin/flytectl get launchplan -p flytesnacks -d development --version v5 project.train.train_workflow --execFile execution_spec.yaml
         
       - name: Create workflow execution
-        run: flytectl create execution -p flytesnacks -d development --version v5 --execFile execution_spec.yaml
-      
-          
+        run: ./bin/flytectl create execution -p flytesnacks -d development --version v5 --execFile execution_spec.yaml
