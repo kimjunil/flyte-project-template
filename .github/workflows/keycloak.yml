@@ -22,5 +22,4 @@ jobs:
           --data-urlencode 'client_secret=${{ secrets.KEYCLOAK_CLIENT_SECRET }}' \
           --data-urlencode 'scope=openid' \
           --data-urlencode 'username=${{ secrets.KEYCLOAK_USERNAME }}' \
-          --data-urlencode 'password=${{ secrets.KEYCLOAK_PASSWORD }}' \ 
-          | jq '.access_token'
+          --data-urlencode 'password=${{ secrets.KEYCLOAK_PASSWORD }}' 
