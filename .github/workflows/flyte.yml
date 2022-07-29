@@ -12,6 +12,9 @@ jobs:
     
       - uses: actions/checkout@v3
       
+      - name: Add SHORT_SHA env property with commit short sha
+        run: echo "short_sha=`echo ${{ github.sha }} | cut -c1-8`" >> $GITHUB_ENV
+        
       - name: Install flytectl
         run: |
           curl -sL https://ctl.flyte.org/install | bash
