@@ -23,7 +23,7 @@ jobs:
           cat /home/runner/.flyte/config.yaml          
  
       - name: Install pyflyte
-        run: pip install -r requirements.txt
+        run: pip install flytekit
           
       - name: Serialize project
         run: |
