@@ -27,7 +27,7 @@ jobs:
           python -m venv venv
           source venv/bin/activate
           pip install wheel
-          pip install flytekit
+          pip install -r requirements.txt
           cd project
           mkdir _pb_output
           pyflyte -c /home/runner/.flyte/config.yaml --pkgs train serialize --image qraftaxe/flyte-project-template:46781260 workflows -f _pb_output/
