@@ -37,7 +37,7 @@ jobs:
 
       - name: Get Keycloak token
         run: |
-          curl --request POST \
+          echo "keycloak_access_token=curl --request POST \
           --url ${{ secrets.KEYCLOAK_ENDPOINT }} \
           -H 'Content-Type: application/x-www-form-urlencoded' \
           --data-urlencode 'client_id=${{ secrets.KEYCLOAK_CLIENT_ID }}' \
@@ -45,7 +45,8 @@ jobs:
           --data-urlencode 'client_secret=${{ secrets.KEYCLOAK_CLIENT_SECRET }}' \
           --data-urlencode 'scope=openid' \
           --data-urlencode 'username=${{ secrets.KEYCLOAK_USERNAME }}' \
-          --data-urlencode 'password=${{ secrets.KEYCLOAK_PASSWORD }}'
+          --data-urlencode 'password=${{ secrets.KEYCLOAK_PASSWORD }}' \ 
+          | jq '.access_token" >> $GITHUB_ENV
 
       - name: Registar serialized project
         run: ./bin/flytectl register files _pb_output/* -p flytesnacks -d development --version ${{ env.short_sha }}
