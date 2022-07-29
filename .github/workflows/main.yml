@@ -43,7 +43,9 @@ jobs:
       - uses: actions/checkout@v3
       
       - name: Install flytectl
-        run: curl -sL https://ctl.flyte.org/install | bash
+        run: |
+          curl -sL https://ctl.flyte.org/install | bash
+          flytectl config init --host=${{ secrets.FLYTE_ENDPOINT }}
  
       - name: Install pyflyte
         run: pip install -r requirements.txt
@@ -51,7 +53,7 @@ jobs:
       - name: Serialize project
         run: |
           mkdir _pb_output
-          pyflyte -c flyte_config.yaml --pkgs project serialize --in-container-config-path /root/config.yaml --image qraftaxe/${{ github.event.repository.name }}:${{ env.short_sha }} -f _pb_output/
+          pyflyte -c flyte_config.yaml --pkgs project serialize --in-container-config-path ~/.flyte/config.yaml --image qraftaxe/${{ github.event.repository.name }}:${{ env.short_sha }} -f _pb_output/
      
       - name: Registar serialized project
         run: flytectl register files _pb_output/* -p flytesnacks -d development --version ${{ env.short_sha }}
