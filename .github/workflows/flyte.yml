@@ -21,16 +21,13 @@ jobs:
           ./bin/flytectl sandbox start --source=$(shell pwd)
           ./bin/flytectl config init
           cat /home/runner/.flyte/config.yaml          
- 
-      - name: Install pyflyte
+          
+      - name: Serialize project
         run: |
           python -m venv venv
           source venv/bin/activate
           pip install wheel
           pip install flytekit
-          
-      - name: Serialize project
-        run: |
           cd project
           mkdir _pb_output
           pyflyte -c /home/runner/.flyte/config.yaml --pkgs train serialize --image qraftaxe/flyte-project-template:46781260 workflows -f _pb_output/
