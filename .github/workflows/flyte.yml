@@ -1,0 +1,35 @@
+name: Push to Flyte
+
+on:
+  workflow_dispatch:
+  
+jobs:
+
+  push-to-flyte:
+    runs-on: ubuntu-latest
+
+    steps:
+    
+      - uses: actions/checkout@v3
+      
+      - name: Install flytectl
+        run: |
+          curl -sL https://ctl.flyte.org/install | bash
+          ./bin/flytectl config init --host=${{ secrets.FLYTE_ENDPOINT }}
+ 
+      - name: Install pyflyte
+        run: pip install -r requirements.txt
+          
+      - name: Serialize project
+        run: |
+          mkdir _pb_output
+          pyflyte -c flyte_config.yaml --pkgs project serialize --in-container-config-path ~/.flyte/config.yaml --image qraftaxe/flyte-project-template:3c279eae -f _pb_output/
+     
+      - name: Registar serialized project
+        run: ./bin/flytectl register files _pb_output/* -p flytesnacks -d development --version ${{ env.short_sha }}
+           
+      - name: Generate execution spec file
+        run: ./bin/flytectl get launchplan -p flytesnacks -d development --version v5 project.train.train_workflow --execFile execution_spec.yaml
+        
+      - name: Create workflow execution
+        run: ./bin/flytectl create execution -p flytesnacks -d development --version v5 --execFile execution_spec.yaml
