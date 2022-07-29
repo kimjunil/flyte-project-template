@@ -20,6 +20,7 @@ jobs:
           curl -sL https://ctl.flyte.org/install | bash
           ./bin/flytectl config init --host=${{ secrets.FLYTE_ENDPOINT }}
           ls
+          cat /home/runner/.flyte/config.yaml 
  
       - name: Install pyflyte
         run: pip install -r requirements.txt
