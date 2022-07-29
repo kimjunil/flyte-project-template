@@ -27,7 +27,7 @@ jobs:
       - name: Serialize project
         run: |
           mkdir _pb_output
-          pyflyte --pkgs train serialize --local-source-root ./project --image qraftaxe/flyte-project-template:46781260 workflows -f ./_pb_output/
+          pyflyte --pkgs train serialize --local-source-root ./project --image qraftaxe/flyte-project-template:46781260 fast workflows -f ./_pb_output/
      
       - name: Registar serialized project
         run: ./bin/flytectl register files _pb_output/* -p flytesnacks -d development --version ${{ env.short_sha }}
