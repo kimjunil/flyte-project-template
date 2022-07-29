@@ -39,7 +39,7 @@ jobs:
         run: ./bin/flytectl register files _pb_output/* -p flytesnacks -d development --version ${{ env.short_sha }}
            
       - name: Generate execution spec file
-        run: ./bin/flytectl get launchplan -p flytesnacks -d development --version v5 project.train.train_workflow --execFile execution_spec.yaml
+        run: ./bin/flytectl get launchplan -p flytesnacks -d development --version ${{ env.short_sha }} project.train.train_workflow --execFile execution_spec.yaml
         
       - name: Create workflow execution
-        run: ./bin/flytectl create execution -p flytesnacks -d development --version v5 --execFile execution_spec.yaml
+        run: ./bin/flytectl create execution -p flytesnacks -d development --version ${{ env.short_sha }} --execFile execution_spec.yaml
