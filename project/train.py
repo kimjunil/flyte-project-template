@@ -4,7 +4,7 @@ import math
 from flytekit import task, workflow, Resources
 import numpy as np
 import pandas as pd
-from model.polynomial3 import Polynomial3
+from project.model.polynomial3 import Polynomial3
 
 
 @task
