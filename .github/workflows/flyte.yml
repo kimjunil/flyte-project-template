@@ -19,7 +19,7 @@ jobs:
         run: |
           curl -sL https://ctl.flyte.org/install | bash
           ./bin/flytectl config init --host=${{ secrets.FLYTE_ENDPOINT }}
-          yq e --inplace '.admin.clientId = ${{ secrets.FLYTE_CLIENT_ID }}' /home/runner/.flyte/config.yaml 
+          yq e --inplace '.admin.clientId = "${{ secrets.FLYTE_CLIENT_ID }}"' /home/runner/.flyte/config.yaml 
           cat /home/runner/.flyte/config.yaml          
           
       - name: Serialize project
