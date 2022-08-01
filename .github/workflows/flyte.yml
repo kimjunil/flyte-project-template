@@ -19,11 +19,11 @@ jobs:
         run: |
           curl -sL https://ctl.flyte.org/install | bash 
           echo '${{ secrets.FLYTE_CLIENT_ID }}' >> /tmp/flyte_admin_secret
-          yq e --inplace '.admin.endpoint = "${{ secrets.FLYTE_ENDPOINT }}"' /home/runner/flyte_config.yaml
-          yq e --inplace '.admin.authType = "ClientSecret"' /home/runner/flyte_config.yaml
-          yq e --inplace '.admin.clientSecretLocation = "/tmp/flyte_admin_secret"' /home/runner/flyte_config.yaml
+          yq e --inplace '.admin.endpoint = "${{ secrets.FLYTE_ENDPOINT }}"' flyte_config.yaml
+          yq e --inplace '.admin.authType = "ClientSecret"' flyte_config.yaml
+          yq e --inplace '.admin.clientSecretLocation = "/tmp/flyte_admin_secret"' flyte_config.yaml
           cat /home/runner/flyte_config.yaml     
-          ./bin/flytectl config --file /home/runner/flyte_config.yaml
+          ./bin/flytectl config --file flyte_config.yaml
           
       - name: Serialize project
         run: |
