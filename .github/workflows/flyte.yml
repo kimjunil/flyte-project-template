@@ -22,7 +22,7 @@ jobs:
           yq e --inplace '.admin.endpoint = "${{ secrets.FLYTE_ENDPOINT }}"' flyte_config.yaml
           yq e --inplace '.admin.authType = "ClientSecret"' flyte_config.yaml
           yq e --inplace '.admin.clientSecretLocation = "/tmp/flyte_admin_secret"' flyte_config.yaml
-          cat /home/runner/flyte_config.yaml     
+          cat flyte_config.yaml     
           ./bin/flytectl config --file flyte_config.yaml
           
       - name: Serialize project
