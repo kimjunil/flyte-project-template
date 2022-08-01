@@ -19,6 +19,7 @@ jobs:
         run: |
           curl -sL https://ctl.flyte.org/install | bash
           ./bin/flytectl config init --host=${{ secrets.FLYTE_ENDPOINT }}
+          yq e --inplace '.admin.clientId = ${{ FLYTE_CLIENT_ID }}' /home/runner/.flyte/config.yaml 
           cat /home/runner/.flyte/config.yaml          
           
       - name: Serialize project
@@ -34,16 +35,16 @@ jobs:
       - name: flytectl config init
         run: ./bin/flytectl config init --host=${{ secrets.FLYTE_ENDPOINT }}        
 
-      - name: Get Keycloak token
-        run: |
-          echo "keycloak_access_token=`curl -L -X POST '${{ secrets.KEYCLOAK_ENDPOINT }}' \
-          -H 'Content-Type: application/x-www-form-urlencoded' \
-          --data-urlencode 'client_id=${{ secrets.KEYCLOAK_CLIENT_ID }}' \
-          --data-urlencode 'grant_type=password' \
-          --data-urlencode 'client_secret=${{ secrets.KEYCLOAK_CLIENT_SECRET }}' \
-          --data-urlencode 'scope=openid' \
-          --data-urlencode 'username=${{ secrets.KEYCLOAK_USERNAME }}' \
-          --data-urlencode 'password=${{ secrets.KEYCLOAK_PASSWORD }}' | jq '.access_token'`" >> $GITHUB_ENV
+#       - name: Get Keycloak token
+#         run: |
+#           echo "keycloak_access_token=`curl -L -X POST '${{ secrets.KEYCLOAK_ENDPOINT }}' \
+#           -H 'Content-Type: application/x-www-form-urlencoded' \
+#           --data-urlencode 'client_id=${{ secrets.KEYCLOAK_CLIENT_ID }}' \
+#           --data-urlencode 'grant_type=password' \
+#           --data-urlencode 'client_secret=${{ secrets.KEYCLOAK_CLIENT_SECRET }}' \
+#           --data-urlencode 'scope=openid' \
+#           --data-urlencode 'username=${{ secrets.KEYCLOAK_USERNAME }}' \
+#           --data-urlencode 'password=${{ secrets.KEYCLOAK_PASSWORD }}' | jq '.access_token'`" >> $GITHUB_ENV
 
       - name: Registar serialized project
         run: ./bin/flytectl register files _pb_output/* -p flytesnacks -d development --version ${{ env.short_sha }} --admin.authorizationHeader ${{ env.keycloak_access_token }}
