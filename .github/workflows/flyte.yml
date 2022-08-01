@@ -23,7 +23,6 @@ jobs:
           yq e --inplace '.admin.authType = "ClientSecret"' flyte_config.yaml
           yq e --inplace '.admin.clientSecretLocation = "/tmp/flyte_admin_secret"' flyte_config.yaml
           cat flyte_config.yaml     
-          ./bin/flytectl config --file flyte_config.yaml
           
       - name: Serialize project
         run: |
@@ -47,10 +46,10 @@ jobs:
 #           --data-urlencode 'password=${{ secrets.KEYCLOAK_PASSWORD }}' | jq '.access_token'`" >> $GITHUB_ENV
 
       - name: Registar serialized project
-        run: ./bin/flytectl register files _pb_output/* -p flytesnacks -d development --version ${{ env.short_sha }}
+        run: ./bin/flytectl register files _pb_output/* -p flytesnacks -d development --version ${{ env.short_sha }} -c flyte_config.yaml
            
       - name: Generate execution spec file
-        run: ./bin/flytectl get launchplan -p flytesnacks -d development --version ${{ env.short_sha }} project.train.train_workflow --execFile execution_spec.yaml
+        run: ./bin/flytectl get launchplan -p flytesnacks -d development --version ${{ env.short_sha }} project.train.train_workflow --execFile execution_spec.yaml -c flyte_config.yaml
         
       - name: Create workflow execution
-        run: ./bin/flytectl create execution -p flytesnacks -d development --version ${{ env.short_sha }} --execFile execution_spec.yaml
+        run: ./bin/flytectl create execution -p flytesnacks -d development --version ${{ env.short_sha }} --execFile execution_spec.yaml -c flyte_config.yaml
