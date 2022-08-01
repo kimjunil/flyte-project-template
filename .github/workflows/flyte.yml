@@ -1,4 +1,4 @@
-pb_name: Push to Flyte
+name: Push to Flyte
 
 on:
   workflow_dispatch:
