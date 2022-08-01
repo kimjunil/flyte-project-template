@@ -31,7 +31,7 @@ jobs:
           source venv/bin/activate
           pip install wheel
           pip install -r requirements.txt
-          pyflyte -c ../flyte_config.yaml --pkgs project.train serialize --local-source-root ./project/ --image qraftaxe/flyte-project-template:46781260 workflows -f _pb_output/
+          pyflyte -c flyte_config.yaml --pkgs project.train serialize --local-source-root ./project/ --image qraftaxe/flyte-project-template:46781260 workflows -f _pb_output/
 
       - name: Registar serialized project
         run: |
