@@ -44,9 +44,6 @@ jobs:
     steps:
     
       - uses: actions/checkout@v3
-      
-      - name: Add SHORT_SHA env property with commit short sha
-        run: echo "short_sha=`echo ${{ github.sha }} | cut -c1-8`" >> $GITHUB_ENV
         
       - name: Install flytectl
         run: |
@@ -65,7 +62,7 @@ jobs:
           pip install wheel
           pip install -r requirements.txt
           mkdir _pb_output
-          pyflyte -c flyte_config.yaml --pkgs project.train serialize --image qraftaxe/flyte-project-template:46781260 workflows -f _pb_output/
+          pyflyte -c flyte_config.yaml --pkgs project.train serialize --image qraftaxe/${{ github.event.repository.name }}:${{ env.short_sha }} workflows -f _pb_output/
       - name: Registar serialized project
         run: |
           ./bin/flytectl register files _pb_output/* -c flyte_config.yaml -p flytesnacks -d development --version ${{ env.short_sha }}
