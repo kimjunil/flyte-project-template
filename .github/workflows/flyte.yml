@@ -21,7 +21,6 @@ jobs:
           echo '${{ secrets.FLYTE_CLIENT_SECRET }}' >> /tmp/flyte_admin_secret
           yq e --inplace '.admin.endpoint = "${{ secrets.FLYTE_ENDPOINT }}"' flyte_config.yaml
           yq e --inplace '.admin.authType = "ClientSecret"' flyte_config.yaml
-          yq e --inplace '.admin.clientId = "${{ secrets.FLYTE_CLIENT_ID }}"' flyte_config.yaml
           yq e --inplace '.admin.clientSecretLocation = "/tmp/flyte_admin_secret"' flyte_config.yaml
           cat flyte_config.yaml     
           
