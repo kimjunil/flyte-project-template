@@ -37,7 +37,6 @@ jobs:
     outputs:
       image_tag: qraftaxe/${{ github.event.repository.name }}:${{ env.short_sha }}
     
-
   push-to-flyte:
     needs: docker-build-and-push
     runs-on: ubuntu-latest
@@ -46,6 +45,9 @@ jobs:
     
       - uses: actions/checkout@v3
       
+      - name: Add SHORT_SHA env property with commit short sha
+        run: echo "short_sha=`echo ${{ github.sha }} | cut -c1-8`" >> $GITHUB_ENV
+        
       - name: Install flytectl
         run: |
           curl -sL https://ctl.flyte.org/install | bash 
@@ -62,13 +64,11 @@ jobs:
           source venv/bin/activate
           pip install wheel
           pip install -r requirements.txt
-          cd project
           mkdir _pb_output
-          pyflyte -c ../flyte_config.yaml --pkgs train serialize --image qraftaxe/flyte-project-template:46781260 workflows -f _pb_output/
+          pyflyte -c flyte_config.yaml --pkgs project.train serialize --image qraftaxe/flyte-project-template:46781260 workflows -f _pb_output/
       - name: Registar serialized project
         run: |
-          ls
-          ./bin/flytectl register files project/_pb_output/* -c flyte_config.yaml -p flytesnacks -d development --version ${{ env.short_sha }}
+          ./bin/flytectl register files _pb_output/* -c flyte_config.yaml -p flytesnacks -d development --version ${{ env.short_sha }}
            
       - name: Generate execution spec file
         run: |
