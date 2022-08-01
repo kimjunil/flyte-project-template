@@ -34,7 +34,9 @@ jobs:
       - name: flytectl config init
         run: |
           ./bin/flytectl config init --host=${{ secrets.FLYTE_ENDPOINT }}        
-          yq e --inplace '.admin.clientId = "${{ secrets.FLYTE_CLIENT_ID }}"' /home/runner/.flyte/config.yaml 
+          echo '${{ secrets.FLYTE_CLIENT_ID }}' >> /tmp/flyte_admin_secret
+          yq e --inplace '.admin.authType = "ClientSecret"' /home/runner/.flyte/config.yaml 
+          yq e --inplace '.admin.clientSecretLocation = "/tmp/flyte_admin_secret"' /home/runner/.flyte/config.yaml 
           ./bin/flytectl config --file /home/runner/.flyte/config.yaml 
 
 #       - name: Get Keycloak token
@@ -49,10 +51,10 @@ jobs:
 #           --data-urlencode 'password=${{ secrets.KEYCLOAK_PASSWORD }}' | jq '.access_token'`" >> $GITHUB_ENV
 
       - name: Registar serialized project
-        run: ./bin/flytectl register files _pb_output/* -p flytesnacks -d development --version ${{ env.short_sha }} --admin.insecureSkipVerify true
+        run: ./bin/flytectl register files _pb_output/* -p flytesnacks -d development --version ${{ env.short_sha }}
            
       - name: Generate execution spec file
-        run: ./bin/flytectl get launchplan -p flytesnacks -d development --version ${{ env.short_sha }} project.train.train_workflow --execFile execution_spec.yaml --admin.insecureSkipVerify true
+        run: ./bin/flytectl get launchplan -p flytesnacks -d development --version ${{ env.short_sha }} project.train.train_workflow --execFile execution_spec.yaml
         
       - name: Create workflow execution
-        run: ./bin/flytectl create execution -p flytesnacks -d development --version ${{ env.short_sha }} --execFile execution_spec.yaml --admin.insecureSkipVerify true
+        run: ./bin/flytectl create execution -p flytesnacks -d development --version ${{ env.short_sha }} --execFile execution_spec.yaml
