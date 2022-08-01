@@ -32,7 +32,7 @@ jobs:
           pip install -r requirements.txt
           cd project
           mkdir _pb_output
-          pyflyte -c ${{GITHUB_WORKSPACE}}/flyte_config.yaml --pkgs train serialize --image qraftaxe/flyte-project-template:46781260 workflows -f _pb_output/
+          pyflyte -c ../flyte_config.yaml --pkgs train serialize --image qraftaxe/flyte-project-template:46781260 workflows -f _pb_output/
           
 #       - name: Get Keycloak token
 #         run: |
