@@ -31,14 +31,11 @@ jobs:
           source venv/bin/activate
           pip install wheel
           pip install -r requirements.txt
-          cd project
-          mkdir _pb_output
-          pyflyte -c ../flyte_config.yaml --pkgs train serialize --image qraftaxe/flyte-project-template:46781260 workflows -f _pb_output/
+          pyflyte -c ../flyte_config.yaml --pkgs project.train serialize --local-source-root ./project/ --image qraftaxe/flyte-project-template:46781260 workflows -f _pb_output/
 
       - name: Registar serialized project
         run: |
-          ls
-          ./bin/flytectl register files project/_pb_output/* -c flyte_config.yaml -p flytesnacks -d development --version ${{ env.short_sha }}
+          ./bin/flytectl register files _pb_output/* -c flyte_config.yaml -p flytesnacks -d development --version ${{ env.short_sha }}
            
       - name: Generate execution spec file
         run: |
