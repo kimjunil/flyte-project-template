@@ -70,14 +70,14 @@ jobs:
           pip install wheel
           pip install -r requirements.txt
           mkdir _pb_output
-          pyflyte -c flyte_config.yaml --pkgs project.train serialize --image qraftaxe/${{ github.event.repository.name }}:${{ steps.docker-build-and-push.outputs.version }} workflows -f _pb_output/
+          pyflyte -c flyte_config.yaml --pkgs project.train serialize --image qraftaxe/${{ github.event.repository.name }}:${{ needs.docker-build-and-push.outputs.version }} workflows -f _pb_output/
       - name: Registar serialized project
         run: |
-          ./bin/flytectl register files _pb_output/* -c flyte_config.yaml -p flytesnacks -d development --version ${{ steps.docker-build-and-push.outputs.version }}
+          ./bin/flytectl register files _pb_output/* -c flyte_config.yaml -p flytesnacks -d development --version ${{ needs.docker-build-and-push.outputs.version }}
            
       - name: Generate execution spec file
         run: |
-          ./bin/flytectl get launchplan -c flyte_config.yaml -p flytesnacks -d development --version ${{ steps.docker-build-and-push.outputs.version }} project.train.train_workflow --execFile execution_spec.yaml
+          ./bin/flytectl get launchplan -c flyte_config.yaml -p flytesnacks -d development --version ${{ needs.docker-build-and-push.outputs.version }} project.train.train_workflow --execFile execution_spec.yaml
         
       - name: Create workflow execution
-        run: ./bin/flytectl create execution -c flyte_config.yaml -p flytesnacks -d development --version ${{ steps.docker-build-and-push.outputs.version }} --execFile execution_spec.yaml
+        run: ./bin/flytectl create execution -c flyte_config.yaml -p flytesnacks -d development --version ${{ needs.docker-build-and-push.outputs.version }} --execFile execution_spec.yaml
