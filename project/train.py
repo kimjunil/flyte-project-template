@@ -41,9 +41,9 @@ def train(df: pd.DataFrame):
 
 
 @workflow
-def train_workflow(n: int = 2000):
+def main_workflow(n: int = 2000):
     train(df=generate_data(n=n))
 
 
 if __name__ == "__main__":
-    train_workflow(n=2000)
+    main_workflow(n=2000)
