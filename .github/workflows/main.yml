@@ -28,7 +28,7 @@ jobs:
         with:
           images: qraftaxe/${{ github.event.repository.name }}
           tags: |
-            type=sha
+            type=raw, value={{sha}}
         
       - name: Login to DockerHub
         uses: docker/login-action@v2
@@ -43,8 +43,8 @@ jobs:
           push: true
           
     outputs:
-      image_tag: ${{ steps.meta.outputs.tags }}
-      short_sha: ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+      image: ${{ steps.meta.outputs.tags }}
+      version: ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
     
   push-to-flyte:
     needs: docker-build-and-push
@@ -71,14 +71,14 @@ jobs:
           pip install wheel
           pip install -r requirements.txt
           mkdir _pb_output
-          pyflyte -c flyte_config.yaml --pkgs project.train serialize --image ${{ steps.docker-build-and-push.outputs.image_tag }} workflows -f _pb_output/
+          pyflyte -c flyte_config.yaml --pkgs project.train serialize --image ${{ steps.docker-build-and-push.outputs.image }} workflows -f _pb_output/
       - name: Registar serialized project
         run: |
-          ./bin/flytectl register files _pb_output/* -c flyte_config.yaml -p flytesnacks -d development --version ${{ steps.docker-build-and-push.outputs.short_sha }}
+          ./bin/flytectl register files _pb_output/* -c flyte_config.yaml -p flytesnacks -d development --version ${{ steps.docker-build-and-push.outputs.version }}
            
       - name: Generate execution spec file
         run: |
-          ./bin/flytectl get launchplan -c flyte_config.yaml -p flytesnacks -d development --version ${{ steps.docker-build-and-push.outputs.short_sha }} project.train.train_workflow --execFile execution_spec.yaml
+          ./bin/flytectl get launchplan -c flyte_config.yaml -p flytesnacks -d development --version ${{ steps.docker-build-and-push.outputs.version }} project.train.train_workflow --execFile execution_spec.yaml
         
       - name: Create workflow execution
-        run: ./bin/flytectl create execution -c flyte_config.yaml -p flytesnacks -d development --version ${{ steps.docker-build-and-push.outputs.short_sha }} --execFile execution_spec.yaml
+        run: ./bin/flytectl create execution -c flyte_config.yaml -p flytesnacks -d development --version ${{ steps.docker-build-and-push.outputs.version }} --execFile execution_spec.yaml
