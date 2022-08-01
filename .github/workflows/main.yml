@@ -43,7 +43,6 @@ jobs:
           push: true
           
     outputs:
-      image: ${{ steps.meta.outputs.tags }}
       version: ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
     
   push-to-flyte:
@@ -71,7 +70,7 @@ jobs:
           pip install wheel
           pip install -r requirements.txt
           mkdir _pb_output
-          pyflyte -c flyte_config.yaml --pkgs project.train serialize --image ${{ steps.docker-build-and-push.outputs.image }} workflows -f _pb_output/
+          pyflyte -c flyte_config.yaml --pkgs project.train serialize --image qraftaxe/${{ github.event.repository.name }}:${{ steps.docker-build-and-push.outputs.version }} workflows -f _pb_output/
       - name: Registar serialized project
         run: |
           ./bin/flytectl register files _pb_output/* -c flyte_config.yaml -p flytesnacks -d development --version ${{ steps.docker-build-and-push.outputs.version }}
