@@ -40,7 +40,7 @@ jobs:
 
   push-to-flyte:
     needs: docker-build-and-push
-    runs-on: ${{ needs.docker-build-and-push.image_tag}}
+    runs-on: ubuntu-latest
 
     steps:
     
