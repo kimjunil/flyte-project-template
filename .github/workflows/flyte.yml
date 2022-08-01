@@ -19,7 +19,6 @@ jobs:
         run: |
           curl -sL https://ctl.flyte.org/install | bash
           ./bin/flytectl config init --host=${{ secrets.FLYTE_ENDPOINT }}
-          yq e --inplace '.admin.clientId = "${{ secrets.FLYTE_CLIENT_ID }}"' /home/runner/.flyte/config.yaml 
           cat /home/runner/.flyte/config.yaml          
           
       - name: Serialize project
@@ -33,7 +32,9 @@ jobs:
           pyflyte -c /home/runner/.flyte/config.yaml --pkgs train serialize --image qraftaxe/flyte-project-template:46781260 workflows -f _pb_output/
           
       - name: flytectl config init
-        run: ./bin/flytectl config init --host=${{ secrets.FLYTE_ENDPOINT }}        
+        run: |
+          ./bin/flytectl config init --host=${{ secrets.FLYTE_ENDPOINT }}        
+          yq e --inplace '.admin.clientId = "${{ secrets.FLYTE_CLIENT_ID }}"' /home/runner/.flyte/config.yaml 
 
 #       - name: Get Keycloak token
 #         run: |
