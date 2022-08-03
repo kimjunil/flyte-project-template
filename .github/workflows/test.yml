@@ -4,18 +4,24 @@ name: test
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - 'main'
     tags:
       - '*'
 
-  workflow_dispatch:
-
 jobs:
-  build:
+  docker:
     runs-on: ubuntu-latest
-
     steps:
-
-      - name: get tag
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}"
-        
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            name/app
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+      
