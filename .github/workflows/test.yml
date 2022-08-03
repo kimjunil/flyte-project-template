@@ -13,4 +13,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Docker meta
-        run: echo "SHORT_SHA=`git rev-parse --short HEAD`" >> $GITHUB_ENV 
+        run: git rev-parse --short HEAD
